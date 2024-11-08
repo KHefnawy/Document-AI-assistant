@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import streamlit as st
 
 # Load environment variables from  .env file
 load_dotenv()
@@ -14,6 +15,9 @@ INDEX_STORAGE = "index_storage"
 
 # API Settings
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY or not OPENAI_API_KEY.startswith('sk-'):
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+
 
 def initialize_settings():
     # Create necessary directories
@@ -27,6 +31,5 @@ def initialize_settings():
         Path(directory).mkdir(parents=True, exist_ok=True)
     
     # Validate API key
-    if not OPENAI_API_KEY:
-        raise ValueError("OPENAI_API_KEY environment variable is not set")
-
+    if not OPENAI_API_KEY or not OPENAI_API_KEY.startswith('sk-'):
+        raise ValueError("Valid OPENAI_API_KEY not found in environment variables or Streamlit secrets")
